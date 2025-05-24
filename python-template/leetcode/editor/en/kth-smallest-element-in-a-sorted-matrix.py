@@ -8,19 +8,18 @@
 from queue import PriorityQueue
 import sys
 import os
-
+import heapq
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from typing import *
 from common.node import *
 # @lc code=start
-class Solution:
+class Solution_1:
     def kthSmallest(self, matrix: List[List[int]], k: int) -> int:
         pq = PriorityQueue() #创建一个优先级队列
         #要放入队列的项。通常是一个元组，格式为 (priority, data)，
         # 其中 priority 是数字，数值越小优先级越高。
         #初始化优先级队列，将每一行的第一个元素装进去
-        print(len(matrix))
         for i in range(len(matrix)):
             pq.put((matrix[i][0],i,0)) 
             '''
@@ -53,7 +52,20 @@ class Solution:
             #此时 pd 里存入的是
             #(2,1,0);(3,2,0);(4,0,1                                                                                                                                                                               )
             return res #当k = 0 时，按照顺序取出的就是第k个最小的元素
+class Solution:
+    def kthSmallest(self, matrix: List[List[int]], k: int) -> int:
+        n = len(matrix)
+        heap = []
 
+        for i in range(n):
+            heapq.heappush(heap, (matrix[i][0], i, 0))
+
+        for _ in range(k - 1):
+            val, i, j = heapq.heappop(heap)
+            if j + 1 < n:
+                heapq.heappush(heap, (matrix[i][j + 1], i, j + 1))
+
+        return heapq.heappop(heap)[0]
 # @lc code=end
 
 if __name__ == '__main__':
